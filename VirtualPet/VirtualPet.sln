@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualPet", "VirtualPet\VirtualPet.csproj", "{E0E39CC0-A2A9-4DCC-B669-E9F950F6A69E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{C9746D54-3922-4F33-992C-B9D124F8DBA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "DTO\Model.csproj", "{CCCAC52A-BD20-4ECC-B2A7-DEC836786246}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0E39CC0-A2A9-4DCC-B669-E9F950F6A69E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0E39CC0-A2A9-4DCC-B669-E9F950F6A69E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0E39CC0-A2A9-4DCC-B669-E9F950F6A69E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0E39CC0-A2A9-4DCC-B669-E9F950F6A69E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9746D54-3922-4F33-992C-B9D124F8DBA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9746D54-3922-4F33-992C-B9D124F8DBA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9746D54-3922-4F33-992C-B9D124F8DBA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9746D54-3922-4F33-992C-B9D124F8DBA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCAC52A-BD20-4ECC-B2A7-DEC836786246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCAC52A-BD20-4ECC-B2A7-DEC836786246}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCAC52A-BD20-4ECC-B2A7-DEC836786246}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCAC52A-BD20-4ECC-B2A7-DEC836786246}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D6702E60-C5F6-4FE8-9968-C95ECDAD131F}
+	EndGlobalSection
+EndGlobal
