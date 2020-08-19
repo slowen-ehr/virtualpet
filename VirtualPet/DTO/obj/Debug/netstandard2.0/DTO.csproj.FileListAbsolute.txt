@@ -1,0 +1,8 @@
+C:\Users\rahissamiyordi\Desktop\Mediatonic\VirtualPet\DTO\bin\Debug\netstandard2.0\DTO.deps.json
+C:\Users\rahissamiyordi\Desktop\Mediatonic\VirtualPet\DTO\bin\Debug\netstandard2.0\DTO.dll
+C:\Users\rahissamiyordi\Desktop\Mediatonic\VirtualPet\DTO\bin\Debug\netstandard2.0\DTO.pdb
+C:\Users\rahissamiyordi\Desktop\Mediatonic\VirtualPet\DTO\obj\Debug\netstandard2.0\DTO.csprojAssemblyReference.cache
+C:\Users\rahissamiyordi\Desktop\Mediatonic\VirtualPet\DTO\obj\Debug\netstandard2.0\DTO.AssemblyInfoInputs.cache
+C:\Users\rahissamiyordi\Desktop\Mediatonic\VirtualPet\DTO\obj\Debug\netstandard2.0\DTO.AssemblyInfo.cs
+C:\Users\rahissamiyordi\Desktop\Mediatonic\VirtualPet\DTO\obj\Debug\netstandard2.0\DTO.dll
+C:\Users\rahissamiyordi\Desktop\Mediatonic\VirtualPet\DTO\obj\Debug\netstandard2.0\DTO.pdb
