@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Content Remove="Data\AnimalsDB.json" />
+    <Content Remove="Data\UsersDB.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -14,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Data\UsersDB.json" />
     <None Include="Data\AnimalsDB.json" />
   </ItemGroup>
 

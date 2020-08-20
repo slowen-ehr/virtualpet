@@ -4,11 +4,12 @@ namespace DTO
 {
     public class Sheep : DTO.Animal
     {
-        public Sheep(int id, string n)
+        public Sheep(int id, string n, int userId)
         {
             var dateTime = DateTime.UtcNow;
             this.ID = id;
             this.Name = n;
+            this.UserId = userId;
             this.CreatedDate = dateTime;
             this.LastUpdatedDate = dateTime;
             this.MaxStatus = 100;

@@ -4,11 +4,12 @@ namespace DTO
 {
     public class TyrannosaurusRex : DTO.Animal
     {
-        public TyrannosaurusRex(int id, string n)
+        public TyrannosaurusRex(int id, string n, int userId)
         {
             var dateTime = DateTime.UtcNow;
             this.ID = id;
             this.Name = n;
+            this.UserId = userId;
             this.CreatedDate = dateTime;
             this.LastUpdatedDate = dateTime;
             this.MaxStatus = 100;

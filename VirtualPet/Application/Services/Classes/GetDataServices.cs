@@ -53,6 +53,36 @@ namespace Application.Services.Classes
             List<Animal> list = GetAnimals().ToList();
             return list.Find(x => x.ID == id);
         }
+
+        public IEnumerable<User> GetUsers()
+        {
+            try
+            {
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "UsersDB.json");
+                if (new FileInfo(path).Length != 0)
+                {
+                    using (StreamReader jsonStream = System.IO.File.OpenText(path))
+                    {
+                        var json = jsonStream.ReadToEnd();
+                        return JsonConvert.DeserializeObject<IEnumerable<User>>(json);
+                    }
+                }
+                else
+                {
+                    return new List<User>();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public User GetUserById(int id)
+        {
+            List<User> list = GetUsers().ToList();
+            return list.Find(x => x.ID == id);
+        }
     }
 }
 

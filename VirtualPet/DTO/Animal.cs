@@ -6,6 +6,7 @@ namespace DTO
     {
         public int ID { get; set; }
         public string Name { get; set;}
+        public int UserId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastUpdatedDate { get; set; }
         public double MinStatus { get; set; }
@@ -40,10 +41,10 @@ namespace DTO
 
         public Animal Update(DateTime newDate)
         {
-            double minutes = (newDate - this.LastUpdatedDate).Minutes;
-            this.Hapiness -= HappynessPerMinute * Math.Round(minutes, 2);
+            int minutes = (newDate - this.LastUpdatedDate).Minutes;
+            this.Hapiness -= (HappynessPerMinute * minutes);
             if (Hapiness < MinStatus) Hapiness = MinStatus;
-            this.Hungry += HungryPerMinute * Math.Round(minutes, 2);
+            this.Hungry += (HungryPerMinute * minutes);
             if (Hungry > MaxStatus) Hungry = MaxStatus;
             this.LastUpdatedDate = newDate;
             return this;

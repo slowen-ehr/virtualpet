@@ -9,5 +9,7 @@ namespace Application.Services.Interfaces
     {
         IEnumerable<Animal> GetAnimals();
         Animal GetAnimalById(int id);
+        IEnumerable<User> GetUsers();
+        User GetUserById(int id);
     }
 }
