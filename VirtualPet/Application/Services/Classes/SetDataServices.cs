@@ -20,35 +20,36 @@ namespace Application.Services.Classes
             animalList: List with the animals in json file        
         Return: The Animal object created
         */
-        public Animal CreateAnimal(string name, int type, List<Animal> animalsList)
+        public Animal CreateAnimal(string name, int type, List<Animal> animalsList, User user, List<User> userList)
         {
-            var dateTime = DateTime.UtcNow;
-
             Animal animal;
             int newId;
             if (animalsList.Count > 0)
             {
                 newId = animalsList[animalsList.Count - 1].ID + 1;
             }
-            else {
+            else
+            {
                 newId = 0;
             }
-                   
+
             switch (type)
             {
                 case 1:
-                    animal = new Cat(newId, name);
+                    animal = new Cat(newId, name, user.ID);
                     break;
                 case 2:
-                    animal = new Sheep(newId, name);
+                    animal = new Sheep(newId, name, user.ID);
                     break;
                 default:
-                    animal = new TyrannosaurusRex(newId, name);
+                    animal = new TyrannosaurusRex(newId, name, user.ID);
                     break;
             }
 
             animalsList.Add(animal);
+            user.Animals.Add(animal.ID);
             RewriteAnimalsDB(animalsList);
+            RewriteUsersDB(userList, user);
 
             return animal;
         }
@@ -65,8 +66,9 @@ namespace Application.Services.Classes
         */
         public bool FeedAnimal(Animal animal, List<Animal> animalList)
         {
-        UpdateAnimals(animalList);
-            animal.LastUpdatedDate = DateTime.UtcNow;
+            //UpdateAnimals(animalList);
+            DateTime now = DateTime.UtcNow;
+            animal.LastUpdatedDate = now;
             if (animal.Hungry == animal.MinStatus)
                 return false;
             animal.Feed();
@@ -87,8 +89,9 @@ namespace Application.Services.Classes
         */
         public bool StrokeAnimal(Animal animal, List<Animal> animalList)
         {
-            UpdateAnimals(animalList);
-            animal.LastUpdatedDate = DateTime.UtcNow;
+            //UpdateAnimals(animalList);
+            DateTime now = DateTime.UtcNow;
+            animal.LastUpdatedDate = now;
             if (animal.Hapiness == animal.MaxStatus) // top happiness
                 return false;
             animal.Stroke();
@@ -97,6 +100,12 @@ namespace Application.Services.Classes
             return true;
         }
 
+        /*
+        Update animals data with the happines decreased and the hungry increased using the params of each animal
+        Params:
+            animalList: List of animal objects to rewrite the json file.
+            newAnimal (optional): New animal object to be inserted in to the animalList and the json file.                
+        */
         public List<Animal> UpdateAnimals(List<Animal> animalList)
         {
             List<Animal> animalListUpdated = new List<Animal>();
@@ -137,17 +146,55 @@ namespace Application.Services.Classes
         }
 
         /*
-        Delete an animal from the json file
+        Delete an animal from the json file and the user animals list
         Params:
             animalList: List of animal objects with the animals to rewrite the json file
             newAnimal (optional): New animal object to be inserted in to the animalList and the json file                
         */
-        public bool DeleteAnimal(int id, List<Animal> animalList)
+        public bool DeleteAnimal(int id, List<Animal> animalList, User user, List<User> userList)
         {
             Animal animalToDelete = animalList.Find(x => x.ID == id);
             animalList.Remove(animalToDelete);
-
+            user = DeleteAnimalFromUser(animalToDelete.ID, user);
             RewriteAnimalsDB(animalList);
+            RewriteUsersDB(userList, user);
+            return true;
+        }
+
+        /*
+        Delete an animal from the Animal user animals list
+        Params:
+            idAnimal: List of animal objects with the animals to rewrite the json file
+            user: User who is going to lose the animal
+        Return:
+            User: User objecto without the animal
+        */
+        public User DeleteAnimalFromUser(int idAnimal, User user)
+        {
+            user.Animals.Remove(idAnimal);
+            return user;
+        }
+
+        /*
+        Update user data in json file
+        Params:
+            userList: List of users objects to rewrite the json file.
+            newUser: New user object to be updated in to the json file.                
+        */
+        private bool RewriteUsersDB(List<User> userList, User newUser)
+        {
+            // replace the new User into the list
+            if (newUser != null)
+            {
+                User oldUser = userList.Where(i => i.ID == newUser.ID).First();
+                var index = userList.IndexOf(oldUser);
+                if (index != -1)
+                    userList[index] = newUser;
+            }
+            string strJson = JsonConvert.SerializeObject(userList);
+
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "UsersDB.json");
+            System.IO.File.WriteAllText(path, strJson);
             return true;
         }
     }

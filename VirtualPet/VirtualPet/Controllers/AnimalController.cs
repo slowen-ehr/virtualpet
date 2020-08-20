@@ -31,19 +31,20 @@ namespace VirtualPet.Controllers
             List<Animal> animalsUpdated = setDataService.UpdateAnimals(animals.ToList());
             if (animals == null)
             {
-                return Ok("Aún no hay animales");
+                return Ok("There is no animals yet");
             }
             else
             {
-                return Ok(animalsUpdated); /*devolverlo bonico??*/
+                return Ok(animalsUpdated);
             }
         }
 
-        [HttpGet] // GET Animals/id
-        [Route("{id}")]
-        public IActionResult GetAnimalsFromId(int id) /*tener usuarios distintos y pasarlos por la URL???*/
+        [HttpGet] // GET Animals/User
+        [Route("User/{idUser}")]
+        public IActionResult GetAnimalsFromUser(int idUser)
         {
             Animal animalUpdated;
+            User user;
             var animals = getDataService.GetAnimals();
             setDataService.UpdateAnimals(animals.ToList());
             if (animals == null)
@@ -52,44 +53,58 @@ namespace VirtualPet.Controllers
             }
             else
             {
-                animalUpdated = getDataService.GetAnimalById(id);
-                if (animalUpdated == null)
-                    return NotFound("That animal does not exist");
-                return Ok(animalUpdated); /*Format?*/
+                user = getDataService.GetUserById(idUser);
+                List<Animal> AnimalsUserList = new List<Animal>();
+                foreach (int animalId in user.Animals)
+                {
+                    animalUpdated = getDataService.GetAnimalById(animalId);
+                    AnimalsUserList.Add(animalUpdated);
+                }
+
+                if (!AnimalsUserList.Any())
+                    return NotFound("That user has no animals");
+                return Ok(AnimalsUserList);
             }
         }
 
         [HttpPost] // POST Animals
-        [Route("create")]
-        public IActionResult CreateAnimal([FromBody] PayloadCreate values)
+        public IActionResult CreateAnimal([FromBody] PayloadCreatesssss values)
         {
-            //{
-            //"name": "Monito",
-            //"type": 0
-            //"UserId": X
-            //}
-
-            string name = values.Name;
-            int type = values.Type;
-            //string name, [FromBody] int type
+            /*
+            {
+            "name": "Carpacho",
+            "type": 0,
+            "UserId": 0
+            }
+            */
             if (ModelState.IsValid)
             {
-                //var x = value.var1.Value; // JToken
+                string name = values.Name;
+                int type = values.Type;
+                int userId = values.UserId;
 
+                // EXCEPCION PARA USERID QUE NO EXISTE Y TIPO DE ANIMAL QUE NO EXISTE
+                List<Animal> animalList = getDataService.GetAnimals().ToList<Animal>();
+                User user = getDataService.GetUserById(userId);
+                List<User> userList = getDataService.GetUsers().ToList<User>();
+
+                Animal animal = setDataService.CreateAnimal(name, type, animalList, user, userList);
+                animalList.Add(animal);
+                return CreatedAtAction(nameof(CreateAnimal), animal);
             }
-            List<Animal> animalList = getDataService.GetAnimals().ToList<Animal>();
-            Animal animal = setDataService.CreateAnimal(name, type, animalList);
-            animalList.Add(animal);
-            return CreatedAtAction(nameof(CreateAnimal), animal);
+            else
+            {
+                return BadRequest("The animal could not be created");
+            }
         }
 
         [HttpPost]
-        [Route("Feed")]
-        public IActionResult FeedAnimals([FromBody] int id)
+        [Route("Feed")] // POST Animals
+        public IActionResult FeedAnimals([FromBody] int animalId)
         {
             try
             {
-                Animal animal = getDataService.GetAnimalById(id);
+                Animal animal = getDataService.GetAnimalById(animalId);
                 List<Animal> animalList = getDataService.GetAnimals().ToList<Animal>();
                 if (!setDataService.FeedAnimal(animal, animalList))
                 {
@@ -98,7 +113,7 @@ namespace VirtualPet.Controllers
             }
             catch
             {
-                return BadRequest($"There is no animal with ID = {id}");
+                return BadRequest($"There is no animal with ID = {animalId}");
             }
             return Ok();
         }
@@ -106,11 +121,11 @@ namespace VirtualPet.Controllers
 
         [HttpPost]
         [Route("Stroke")]
-        public IActionResult StrokeAnimal([FromBody] int id)
+        public IActionResult StrokeAnimal([FromBody] int animalId)
         {
             try
             {
-                Animal animal = getDataService.GetAnimalById(id);
+                Animal animal = getDataService.GetAnimalById(animalId);
                 List<Animal> animalList = getDataService.GetAnimals().ToList<Animal>();
                 if (!setDataService.StrokeAnimal(animal, animalList))
                 {
@@ -119,35 +134,35 @@ namespace VirtualPet.Controllers
             }
             catch
             {
-                return BadRequest($"There is no animal with ID = {id}");
+                return BadRequest($"There is no animal with ID = {animalId}");
             }
             return Ok();
         }
 
-        [HttpDelete] // DELETE Animal/id
-        [Route("{id}")]
-        public IActionResult DeleteAnimal(int id) /*Devolver el resto de animales?*/
+        [HttpDelete] // DELETE Animals/id
+        [Route("{animalId}")]
+        public IActionResult DeleteAnimal(int animalId) /*Devolver el resto de animales?*/
         {
             try
             {
                 List<Animal> animalList = getDataService.GetAnimals().ToList<Animal>();
-                setDataService.DeleteAnimal(id, animalList);
+                List<User> userList = getDataService.GetUsers().ToList<User>();
+                int userId = getDataService.GetAnimalById(animalId).UserId;
+                User user = getDataService.GetUserById(userId);
+                setDataService.DeleteAnimal(animalId, animalList, user, userList);
             }
             catch
             {
-                return BadRequest($"There is no animal with ID = {id}");
+                return BadRequest($"There is no animal with ID = {animalId}");
             }
             return Ok();
-
         }
     }
 
-    /*
-     Payload of the create. To get data from post body
-     */
-    public class PayloadCreate
-    {
-        public string Name { get; set; }
-        public int Type { get; set; }
-    }
+    //public class PayloadCreate
+    //{
+    //    public string Name { get; set; }
+    //    public int Type { get; set; }
+    //    public int UserId { get; set; }
+    //}
 }
