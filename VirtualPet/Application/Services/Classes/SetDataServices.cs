@@ -3,6 +3,7 @@ using DTO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -24,26 +25,15 @@ namespace Application.Services.Classes
         {
             Animal animal;
             int newId;
-            if (animalsList.Count > 0)
-            {
-                newId = animalsList[animalsList.Count - 1].ID + 1;
-            }
-            else
-            {
-                newId = 0;
-            }
 
-            switch (type)
+            newId = (animalsList.Count > 0) ? animalsList[animalsList.Count - 1].ID + 1 : 0;
+
+            switch (type) // Add new cases if new animal classes appears
             {
-                case 1:
-                    animal = new Cat(newId, name, user.ID);
-                    break;
-                case 2:
-                    animal = new Sheep(newId, name, user.ID);
-                    break;
-                default:
-                    animal = new TyrannosaurusRex(newId, name, user.ID);
-                    break;
+                case 0: animal = new TyrannosaurusRex(newId, name, user.ID); break;
+                case 1: animal = new Cat(newId, name, user.ID); break;
+                case 2: animal = new Sheep(newId, name, user.ID); break;
+                default: throw new InvalidEnumArgumentException($"There is no animal type with Type = {type}");
             }
 
             animalsList.Add(animal);
@@ -58,22 +48,16 @@ namespace Application.Services.Classes
         Feeds an animal, decreasing its hungry value.        
         Params:
             animal: The animal to feed
-            animalList: List with the animals in BD;
         
         Return:
             true: boolean that indicates the animal was feeded and no error occurred
             false: boolean to indicate an error occurred
-        */
-        public bool FeedAnimal(Animal animal, List<Animal> animalList)
+        */        
+        public bool FeedAnimal(Animal animal)
         {
-            //UpdateAnimals(animalList);
-            DateTime now = DateTime.UtcNow;
-            animal.LastUpdatedDate = now;
             if (animal.Hungry == animal.MinStatus)
                 return false;
             animal.Feed();
-
-            RewriteAnimalsDB(animalList, newAnimal: animal);
             return true;
         }
 
@@ -81,21 +65,35 @@ namespace Application.Services.Classes
         Strokes an animal, increasing its hapiness value.        
         Params:
             animal: The animal to feed
-            animalList: List with the animals in json file;
         
         Return:
             true: boolean that indicate animal was stroked, no error occurred
             false: boolean that indicate an error occurred
         */
-        public bool StrokeAnimal(Animal animal, List<Animal> animalList)
+        public bool StrokeAnimal(Animal animal)
         {
-            //UpdateAnimals(animalList);
-            DateTime now = DateTime.UtcNow;
-            animal.LastUpdatedDate = now;
             if (animal.Hapiness == animal.MaxStatus) // top happiness
                 return false;
             animal.Stroke();
+            return true;
+        }
 
+        /*
+        Make an action for an animal.        
+        Params:
+            animal: The animal to feed
+            animalList: List with the animals in json file
+            action: The action the animal is going to take
+        Return:
+            true: boolean that indicate animal takes the action, no error occurred
+            false: boolean that indicate an error occurred
+        */
+        public bool ActionAnimal(Animal animal, List<Animal> animalList, Func<Animal, bool> action)
+        {
+            DateTime now = DateTime.UtcNow;
+            animal.LastUpdatedDate = now;
+            if (!action(animal))
+                return false;
             RewriteAnimalsDB(animalList, newAnimal: animal);
             return true;
         }
@@ -183,7 +181,6 @@ namespace Application.Services.Classes
         */
         private bool RewriteUsersDB(List<User> userList, User newUser)
         {
-            // replace the new User into the list
             if (newUser != null)
             {
                 User oldUser = userList.Where(i => i.ID == newUser.ID).First();
@@ -192,7 +189,6 @@ namespace Application.Services.Classes
                     userList[index] = newUser;
             }
             string strJson = JsonConvert.SerializeObject(userList);
-
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "UsersDB.json");
             System.IO.File.WriteAllText(path, strJson);
             return true;

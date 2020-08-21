@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace VirtualPet.Controllers
 {
@@ -25,18 +27,12 @@ namespace VirtualPet.Controllers
         }
 
         [HttpGet] // GET Animals
-        public IActionResult GetAnimals() /*tener usuarios distintos y pasarlos por la URL???*/
+        public IActionResult GetAnimals()
         {
             var animals = getDataService.GetAnimals();
             List<Animal> animalsUpdated = setDataService.UpdateAnimals(animals.ToList());
-            if (animals == null)
-            {
-                return Ok("There is no animals yet");
-            }
-            else
-            {
-                return Ok(animalsUpdated);
-            }
+
+            return (animals == null) ? Ok("There is no animals yet") : Ok(animalsUpdated);
         }
 
         [HttpGet] // GET Animals/User
@@ -67,35 +63,37 @@ namespace VirtualPet.Controllers
             }
         }
 
-        [HttpPost] // POST Animals
-        public IActionResult CreateAnimal([FromBody] PayloadCreatesssss values)
+
+        /*
         {
-            /*
-            {
-            "name": "Carpacho",
-            "type": 0,
-            "UserId": 0
-            }
-            */
+        "name": "Carpacho",
+        "type": 0,
+        "UserId": 0
+        }
+        */
+        [HttpPost] // POST Animals
+        public IActionResult CreateAnimal([FromBody] PayloadCreate values)
+        {
             if (ModelState.IsValid)
             {
                 string name = values.Name;
                 int type = values.Type;
                 int userId = values.UserId;
 
-                // EXCEPCION PARA USERID QUE NO EXISTE Y TIPO DE ANIMAL QUE NO EXISTE
                 List<Animal> animalList = getDataService.GetAnimals().ToList<Animal>();
-                User user = getDataService.GetUserById(userId);
-                List<User> userList = getDataService.GetUsers().ToList<User>();
+                try
+                {
+                    User user = getDataService.GetUserById(userId);
+                    List<User> userList = getDataService.GetUsers().ToList<User>();
+                    Animal animal = setDataService.CreateAnimal(name, type, animalList, user, userList);
+                    animalList.Add(animal);
+                    return CreatedAtAction(nameof(CreateAnimal), animal);
+                }
+                catch (NullReferenceException userException) {return BadRequest(userException.Message);}
+                catch (InvalidEnumArgumentException animalException) { return BadRequest(animalException.Message); }
 
-                Animal animal = setDataService.CreateAnimal(name, type, animalList, user, userList);
-                animalList.Add(animal);
-                return CreatedAtAction(nameof(CreateAnimal), animal);
             }
-            else
-            {
-                return BadRequest("The animal could not be created");
-            }
+            else return BadRequest("The animal could not be created");
         }
 
         [HttpPost]
@@ -106,15 +104,12 @@ namespace VirtualPet.Controllers
             {
                 Animal animal = getDataService.GetAnimalById(animalId);
                 List<Animal> animalList = getDataService.GetAnimals().ToList<Animal>();
-                if (!setDataService.FeedAnimal(animal, animalList))
+                if (!setDataService.ActionAnimal(animal, animalList, setDataService.FeedAnimal))
                 {
                     return Ok($"{animal.Name} is full so it can't eat anymore");
                 }
             }
-            catch
-            {
-                return BadRequest($"There is no animal with ID = {animalId}");
-            }
+            catch (NullReferenceException animalException) { return BadRequest(animalException.Message); }
             return Ok();
         }
 
@@ -127,15 +122,12 @@ namespace VirtualPet.Controllers
             {
                 Animal animal = getDataService.GetAnimalById(animalId);
                 List<Animal> animalList = getDataService.GetAnimals().ToList<Animal>();
-                if (!setDataService.StrokeAnimal(animal, animalList))
+                if (!setDataService.ActionAnimal(animal, animalList, setDataService.StrokeAnimal))
                 {
                     return Ok($"{animal.Name} is completely happy and it do not want more strokes");
                 }
             }
-            catch
-            {
-                return BadRequest($"There is no animal with ID = {animalId}");
-            }
+            catch (NullReferenceException animalException) { return BadRequest(animalException.Message); }
             return Ok();
         }
 
@@ -151,18 +143,9 @@ namespace VirtualPet.Controllers
                 User user = getDataService.GetUserById(userId);
                 setDataService.DeleteAnimal(animalId, animalList, user, userList);
             }
-            catch
-            {
-                return BadRequest($"There is no animal with ID = {animalId}");
-            }
+            catch (NullReferenceException userException) { return BadRequest(userException.Message); }
+            catch (InvalidEnumArgumentException animalException) { return BadRequest(animalException.Message); }
             return Ok();
         }
     }
-
-    //public class PayloadCreate
-    //{
-    //    public string Name { get; set; }
-    //    public int Type { get; set; }
-    //    public int UserId { get; set; }
-    //}
 }
