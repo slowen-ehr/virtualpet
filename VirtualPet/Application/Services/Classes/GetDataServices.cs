@@ -51,9 +51,16 @@ namespace Application.Services.Classes
         public Animal GetAnimalById(int id)
         {
             List<Animal> list = GetAnimals().ToList();
-            return list.Find(x => x.ID == id);
+            Animal animal = list.Find(x => x.ID == id);
+            if (animal == null) throw new NullReferenceException($"There is no animall with ID = {id}");
+            return animal;
         }
 
+        /*
+        Show the Users database.
+        
+        Return: All the users as an IEnumerable object
+        */
         public IEnumerable<User> GetUsers()
         {
             try
@@ -78,10 +85,18 @@ namespace Application.Services.Classes
             }
         }
 
+        /*
+         Find an User object from the users database.        
+         Params:
+             id: ID of the user to be found     
+         Return: The user object found
+         */
         public User GetUserById(int id)
         {
             List<User> list = GetUsers().ToList();
-            return list.Find(x => x.ID == id);
+            User user = list.Find(x => x.ID == id);
+            if (user == null) throw new NullReferenceException($"There is no user with ID = {id}");
+            return user;
         }
     }
 }
