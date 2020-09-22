@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "5qP0s8CP5jckoRVeHbu/YfoKkLKK753XmFMzQdSnTdOafbaO3akYXz4gMPvw49N9eYs5TGgTy3abd1oHjQeFSw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\slowe\\Desktop\\Mediatonic-VirtualPet_EduardoHernanz\\Visual Studio Project\\VirtualPet\\VirtualPet\\VirtualPet.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\slowe\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
